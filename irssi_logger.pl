@@ -13,12 +13,12 @@ use vars qw($VERSION %IRSSI);
 
 $VERSION = "1.0";
 %IRSSI = (
-        authors     => "Aaron Bieber",
-        contact     => "deftly\@gmail.com",
-        name        => "irssi_logger",
-        description => "logs everything to a postgresql database",
-        license     => "BSD",
-        url         => "https://github.com/qbit/irssi_logger",
+    authors     => "Aaron Bieber",
+    contact     => "deftly\@gmail.com",
+    name        => "irssi_logger",
+    description => "logs everything to a postgresql database",
+    license     => "BSD",
+    url         => "https://github.com/qbit/irssi_logger",
     );
 
 my $user = $ENV{LOGNAME} || $ENV{USER} || getpwuid($<);
