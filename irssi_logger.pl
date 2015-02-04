@@ -25,8 +25,7 @@ sub connect_db {
     my $dbuser = Irssi::settings_get_str('dbuser') || $user;
     my $dbpass = Irssi::settings_get_str('dbpass') || "";
 
-    $dbh = $dbh = DBI->connect("dbi:Pg:dbname=$dbname", $dbuser, $dbpass) || Irssi::print("Can't connect to db!" . DBI::errstr);
-    return $dbh;
+    return DBI->connect("dbi:Pg:dbname=$dbname", $dbuser, $dbpass) || Irssi::print("Can't connect to db!" . DBI::errstr);
 }
 
 my $sql = qq~
@@ -44,7 +43,7 @@ sub log {
     push(@vals, $message);
     push(@vals, $target);
 
-    $_ = '' unless defined $_ for @vals;
+    defined or $_ = "" for @vals;
 
     $dbh->do($sql, undef, @vals) || Irssi::print("Can't log to DB! " . DBI::errstr);
 }
