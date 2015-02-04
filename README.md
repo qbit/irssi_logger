@@ -38,7 +38,7 @@ CREATE TABLE logs (
   channel text not null
 );
 CREATE extension pg_trgm;
-CREATE index logs_trgm_idx ON logs USING gist (log gist_trgm_ops);
+CREATE index logs_trgm_idx on logs USING gist (log gist_trgm_ops);
 CREATE index logs_date_idx on logs (logdate);
-CREATE index logs_nick_idx onlogs (nick);
+CREATE index logs_nick_idx on logs (nick);
 ```
