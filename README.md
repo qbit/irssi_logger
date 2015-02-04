@@ -15,6 +15,12 @@ Plans
 * Support for user setable database host
 * Command for full text query in irssi
 
+Requirements
+===========
+
+* PostgreSQL
+* PostgreSQL contrib (pg_trgm)
+
 Assumptions
 ===========
 
