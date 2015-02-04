@@ -24,15 +24,6 @@ $VERSION = "1.0";
 my $user = $ENV{LOGNAME} || $ENV{USER} || getpwuid($<);
 my $dbh;
 
-sub connect_db {
-    my $dbname = Irssi::settings_get_str('dbname') || $user;
-    my $dbuser = Irssi::settings_get_str('dbuser') || $user;
-    my $dbpass = Irssi::settings_get_str('dbpass') || "";
-
-    Irssi::print("Connecting to the database");
-
-    return DBI->connect("dbi:Pg:dbname=$dbname", $dbuser, $dbpass) || Irssi::print("Can't connect to db!" . DBI::errstr);
-}
 
 my $sql = qq~
 insert into logs (logdate, nick, log, channel) values (?, ?, ?, ?)
@@ -62,30 +53,51 @@ my $init_pg_trgm = qq~
 CREATE extension pg_trgm
 ~;
 my $create_trgm_idx = qq~
-CREATE index logs_trgm_idx ON logs USING gist (log gist_trgm_ops);
+CREATE index logs_trgm_idx on logs USING gist (log gist_trgm_ops);
 ~;
 my $create_date_idx = qq~
 CREATE index logs_date_idx on logs (logdate)
 ~;
 my $create_chan_idx = qq~
-CREATE index logs_nick_idx onlogs (nick)
+CREATE index logs_nick_idx on logs (nick)
 ~;
 
 sub db_init {
-    $dbh = connect_db() unless $dbh;
-    my $sth = $dbh->prepare($check_db);
+    my ($dbname, $dbuser, $dbpass) = @_;
+    my $mdbh = DBI->connect("dbi:Pg:dbname=$dbname", $dbuser, $dbpass) || Irssi::print("Can't connect to postgres! " . DBI::errstr);
+
+    my $sth = $mdbh->prepare($check_db);
     $sth->execute();
     my $row = $sth->fetchrow_hashref();
 
     if (! $row->{exists}) {
-	$dbh->do($create) || Irssi::print("Can't create db! " . DBI::errstr);
-	$dbh->do($init_pg_trgm) || Irssi::print("Can't create extension " . DBI::errstr);
-	$dbh->do($create_trgm_idx) || Irssi::print("Can't create trgm index " . DBI::errstr);
-	$dbh->do($create_date_idx) || Irssi::print("Can't create date index " . DBI::errstr);
-	$dbh->do($create_chan_idx) || irssi::print("Can't create chan index " . DBI::errstr);
+	Irssi::print("Creating database.");
+	$mdbh->do($create) || Irssi::print("Can't create db! " . DBI::errstr);
+	$mdbh->do($init_pg_trgm) || Irssi::print("Can't create extension " . DBI::errstr);
+	$mdbh->do($create_trgm_idx) || Irssi::print("Can't create trgm index " . DBI::errstr);
+	$mdbh->do($create_date_idx) || Irssi::print("Can't create date index " . DBI::errstr);
+	$mdbh->do($create_chan_idx) || irssi::print("Can't create chan index " . DBI::errstr);
+    } else {
+	Irssi::print("Database already exists.");
     }
+    $sth->finish();
+    $mdbh->disconnect();
+
     return 1;
 }
+
+sub connect_db {
+    my $dbname = Irssi::settings_get_str('dbname') || $user;
+    my $dbuser = Irssi::settings_get_str('dbuser') || $user;
+    my $dbpass = Irssi::settings_get_str('dbpass') || "";
+
+    db_init($dbname, $dbuser, $dbpass);
+
+    Irssi::print("Connecting to the database");
+
+    return DBI->connect("dbi:Pg:dbname=$dbname", $dbuser, $dbpass) || Irssi::print("Can't connect to db!" . DBI::errstr);
+}
+
 sub write_db {
     my ($nick, $message, $target) = @_;
     my @vals;
@@ -102,10 +114,12 @@ sub write_db {
 
     $dbh->do($sql, undef, @vals) || Irssi::print("Can't log to DB! " . DBI::errstr);
 }
+
 sub log_me {
     my ($server, $message, $target) = @_;
     write_db($server->{nick}, $message, $target);
 }
+
 sub log {
     my ($server, $message, $nick, $address, $target) = @_;
     write_db($nick, $message, $target)
