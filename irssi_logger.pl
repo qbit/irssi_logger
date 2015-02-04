@@ -87,9 +87,9 @@ sub db_init {
 }
 
 sub connect_db {
-    my $dbname = Irssi::settings_get_str('dbname') || $user;
-    my $dbuser = Irssi::settings_get_str('dbuser') || $user;
-    my $dbpass = Irssi::settings_get_str('dbpass') || "";
+    my $dbname = Irssi::settings_get_str('il_dbname') || $user;
+    my $dbuser = Irssi::settings_get_str('il_dbuser') || $user;
+    my $dbpass = Irssi::settings_get_str('il_dbpass') || "";
 
     db_init($dbname, $dbuser, $dbpass);
 
@@ -128,8 +128,8 @@ sub log {
 Irssi::signal_add_last('message public', 'log');
 Irssi::signal_add_last('message own_public', 'log_me');
 
-Irssi::settings_add_str('irssi_logger', 'dbname', $user);
-Irssi::settings_add_str('irssi_logger', 'dbuser', $user);
-Irssi::settings_add_str('irssi_logger', 'dbpass', "");
+Irssi::settings_add_str('irssi_logger', 'il_dbname', $user);
+Irssi::settings_add_str('irssi_logger', 'il_dbuser', $user);
+Irssi::settings_add_str('irssi_logger', 'il_dbpass', "");
 
 Irssi::print("irssi_logger loaded!");

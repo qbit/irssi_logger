@@ -3,26 +3,34 @@ irssi_logger
 
 Log irssi chats to PostgreSQL
 
-Features
-========
+## Features
 
 * Auto creation of database / indexes
 * Full-Text search ready
 
-Plans
-=====
+## Usage
+
+### Loading
+
+    /load script irssi_logger.pl
+
+### Set DB options
+
+    /set il_dbname potatto
+    /set il_dbuser superduperuser
+    /set il_dbpass supersekret
+
+## Plans
 
 * Support for user setable database host
 * Command for full text query in irssi
 
-Requirements
-===========
+## Requirements
 
 * PostgreSQL
 * PostgreSQL contrib (pg_trgm)
 
-Assumptions
-===========
+## Assumptions
 
 The script assumes that the user creating the database has super user privs. (extension and db creation).
 
