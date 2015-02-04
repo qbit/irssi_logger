@@ -16,9 +16,9 @@ Log irssi chats to PostgreSQL
 
 ### Set DB options
 
-    /set il_dbname potatto
-    /set il_dbuser superduperuser
-    /set il_dbpass supersekret
+    /set il_dbname potatto #(default: user running irssi)
+    /set il_dbuser superduperuser #(default: user running irssi)
+    /set il_dbpass supersekret #(default: "")
 
 ## Plans
 
