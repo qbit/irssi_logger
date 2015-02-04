@@ -16,7 +16,7 @@ $VERSION = "1.0";
     authors     => "Aaron Bieber",
     contact     => "deftly\@gmail.com",
     name        => "irssi_logger",
-    description => "logs everything to a postgresql database",
+    description => "Logs chats to a PostgreSQL database.",
     license     => "BSD",
     url         => "https://github.com/qbit/irssi_logger",
     );
