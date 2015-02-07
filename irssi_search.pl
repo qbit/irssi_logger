@@ -36,6 +36,8 @@ where ts @@ query and channel = ? order by rank desc limit 1;
 sub query {
     my ($server, $message, $target) = @_;
 
+    &Irssi::signal_continue;
+
     if ($message =~ /^:search/) {
 	$message =~ s/^:search//;
 	my @p = split(' ', $message);
